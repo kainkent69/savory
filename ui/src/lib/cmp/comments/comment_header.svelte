@@ -6,24 +6,10 @@
 	}
 
 	let { comment, timeAgo, levelDots }: Props = $props();
-
-	const avatarColors = [
-		'bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500',
-		'bg-violet-500', 'bg-cyan-500', 'bg-fuchsia-500', 'bg-orange-500'
-	]
-	function hashColor(name: string): string {
-		let h = 0
-		for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) | 0
-		return avatarColors[Math.abs(h) % avatarColors.length]
-	}
-	let avatarColor = $derived(hashColor(comment.poster))
 </script>
 
-<div class="flex items-center gap-2 relative">
-	{#if comment.level > 0}
-			<div class="absolute -left-3 top-1/2 -mt-px h-[1.5px] w-3 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
-		{/if}
-		<div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full {avatarColor} text-[11px] font-bold text-white">
+<div class="flex items-center gap-2">
+	<div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-700 text-[11px] font-bold text-white">
 		{comment.avatar}
 	</div>
 	<span class="text-[11px] font-bold text-gray-900 dark:text-gray-100">{comment.poster}</span>

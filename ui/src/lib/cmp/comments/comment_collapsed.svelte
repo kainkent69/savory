@@ -6,17 +6,6 @@
 	}
 
 	let { comment, levelDots, onexpand }: Props = $props();
-
-	const avatarColors = [
-		'bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-rose-500',
-		'bg-violet-500', 'bg-cyan-500', 'bg-fuchsia-500', 'bg-orange-500'
-	]
-	function hashColor(name: string): string {
-		let h = 0
-		for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) | 0
-		return avatarColors[Math.abs(h) % avatarColors.length]
-	}
-	let avatarColor = $derived(hashColor(comment.poster))
 </script>
 
 <button
@@ -24,7 +13,7 @@
 	onclick={onexpand}
 	class="w-full text-left flex items-center gap-1.5 rounded-lg py-1.5 px-1 text-[10px] text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition"
 >
-	<div class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full {avatarColor} text-[10px] font-bold text-white">
+	<div class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-700 text-[10px] font-bold text-white">
 		{comment.avatar}
 	</div>
 	<span class="font-medium text-gray-700 dark:text-gray-300">{comment.poster}</span>

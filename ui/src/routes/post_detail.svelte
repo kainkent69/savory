@@ -204,8 +204,8 @@
 
 			{#if comments.length > 0}
 				<div class="space-y-2">
-					{#each comments as c (c.id)}
-						<CommentCmp comment={c} />
+					{#each comments as c, i (c.id)}
+						<CommentCmp comment={c} index={i} />
 					{/each}
 				</div>
 			{/if}

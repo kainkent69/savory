@@ -11,9 +11,10 @@
 
 	interface Props {
 		comment: TComment;
+		index?: number;
 	}
 
-	let { comment }: Props = $props();
+	let { comment, index = 0 }: Props = $props();
 
 	let hasPrev = $derived(comment.level > 0 && comment.group?.parent != null);
 	let hasNext = $derived(comment.group?.hasNext(comment.index) ?? false);
@@ -23,7 +24,6 @@
 		const el = document.getElementById(id)
 		if (!el) return
 		el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-		// flash highlight for nav feedback
 		el.classList.add('bg-blue-50', 'dark:bg-blue-900/20')
 		el.style.transition = 'background-color 400ms ease'
 		setTimeout(() => {
@@ -56,25 +56,22 @@
 		});
 	}
 
-	let expanded = $state(false);
+	let showingReplies = $state(false);
+	let forceFull = $state(false);
 	let replying = $state(false);
 	let replyText = $state('');
 	let currentEmote = $state<string | null>(null);
 	let showEmotes = $state(false);
 
 	const threadColors = [
-		'border-blue-400 dark:border-blue-500',
-		'border-red-400 dark:border-red-500',
-		'border-green-400 dark:border-green-500',
-		'border-purple-400 dark:border-purple-500',
-		'border-orange-400 dark:border-orange-500',
-		'border-teal-400 dark:border-teal-500'
+		'border-gray-200 dark:border-gray-700',
+		'border-blue-200 dark:border-blue-800'
 	];
 
 	let lineColor = $derived(threadColors[comment.level % threadColors.length]);
 	let hasReplies = $derived(comment.replies.length > 0);
 	let replyCount = $derived(comment.replies.length);
-	let collapsed = $derived(hasReplies && expanded);
+	let collapsed = $derived(showingReplies && hasReplies && !forceFull);
 
 	function totalDescendants(replies: TComment[]): number {
 		let n = replies.length;
@@ -111,7 +108,8 @@
 		comment.replies = [...comment.replies, newReply];
 		replyText = '';
 		replying = false;
-		expanded = true;
+		showingReplies = true;
+		forceFull = false;
 	}
 
 	function computeAgo(): string {
@@ -126,22 +124,23 @@
 		return `${Math.floor(h / 24)}d`
 	}
 
-	// SSR-safe: $effect only runs client-side
 	let timeAgo = $state('just now')
 	$effect(() => {
 		timeAgo = computeAgo()
 	})
 
 	function handleExpand() {
-		expanded = false;
+		forceFull = true;
 	}
 
 	function handleShowReplies() {
-		expanded = true;
+		showingReplies = true;
+		forceFull = false;
 	}
 
 	function handleHideReplies() {
-		expanded = false;
+		showingReplies = false;
+		forceFull = false;
 	}
 
 	function handleToggleEmotes() {
@@ -163,14 +162,15 @@
 	}
 </script>
 
-<!-- thread line + indent -->
-<div class="border-l-[1.5px] {lineColor} animate-[comment-in_200ms_ease-out] hover:bg-gray-50/50 dark:hover:bg-gray-900/20 transition-colors rounded-r-lg" style="margin-left:{comment.level * 14}px" id="c-{comment.level}:{comment.index}">
+<div class="relative border-l-[1.5px] {lineColor} animate-[comment-in_200ms_ease-out] {index % 2 === 0 ? 'bg-gray-50/30 dark:bg-gray-900/20' : ''}" class:ml-3={comment.level > 0} id="c-{comment.level}:{comment.index}">
+		{#if comment.level > 0}
+			<span class="absolute -left-[4.5px] top-3.5 h-[7px] w-[7px] rounded-full border-[1.5px] {lineColor} bg-white dark:bg-black"></span>
+		{/if}
 	<div class="pl-3 py-2.5 pr-2">
 		{#if collapsed}
 			<CommentCollapsed {comment} {levelDots} onexpand={handleExpand} />
 		{:else}
 			<CommentHeader {comment} {timeAgo} {levelDots} />
-
 			<CommentBody {comment} />
 
 			<CommentActions
@@ -198,17 +198,16 @@
 			{/if}
 		{/if}
 
-		<!-- nested replies -->
 		{#if hasReplies}
-			{#if expanded}
+			{#if showingReplies}
 				<div class="mt-2">
 					{#each comment.replies as reply (reply.id)}
 						<Self comment={reply} />
 					{/each}
 				</div>
-				<CommentRepliesToggle {totalCount} {expanded} onshow={handleShowReplies} onhide={handleHideReplies} />
+				<CommentRepliesToggle {totalCount} expanded={showingReplies} onshow={handleShowReplies} onhide={handleHideReplies} />
 			{:else}
-				<CommentRepliesToggle {totalCount} {expanded} onshow={handleShowReplies} onhide={handleHideReplies} />
+				<CommentRepliesToggle {totalCount} expanded={showingReplies} onshow={handleShowReplies} onhide={handleHideReplies} />
 			{/if}
 		{/if}
 	</div>
