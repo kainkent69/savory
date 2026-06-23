@@ -60,8 +60,6 @@
 	let forceFull = $state(false);
 	let replying = $state(false);
 	let replyText = $state('');
-	let currentEmote = $state<string | null>(null);
-	let showEmotes = $state(false);
 
 	const threadColors = [
 		'border-gray-200 dark:border-gray-700',
@@ -143,14 +141,6 @@
 		forceFull = false;
 	}
 
-	function handleToggleEmotes() {
-		showEmotes = !showEmotes;
-	}
-
-	function handleSelectEmote(em: string) {
-		currentEmote = currentEmote === em ? null : em;
-		showEmotes = false;
-	}
 
 	function handleToggleReply() {
 		replying = !replying;
@@ -179,10 +169,6 @@
 				{hasPrev}
 				{hasNext}
 				{replying}
-				{currentEmote}
-				{showEmotes}
-				ontoggle_emotes={handleToggleEmotes}
-				onselect_emote={handleSelectEmote}
 				ontoggle_reply={handleToggleReply}
 				ongoprev={goPrev}
 				ongonext={goNext}

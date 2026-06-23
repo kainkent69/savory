@@ -103,3 +103,9 @@ body {
 	from { opacity: 0; transform: translateX(-8px); }
 	to   { opacity: 1; transform: translateX(0); }
 }
+
+@keyframes wiggle {
+	0%, 100% { transform: rotate(0deg) scale(1); }
+	25% { transform: rotate(-8deg) scale(1.1); }
+	75% { transform: rotate(8deg) scale(1.1); }
+}

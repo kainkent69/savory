@@ -1,0 +1,20 @@
+-- +goose Up
+CREATE TABLE IF NOT EXISTS accounts (
+	id BIGSERIAL PRIMARY KEY,
+	email VARCHAR(255) NOT NULL UNIQUE,
+	ref0 VARCHAR(13) NOT NULL,
+	ref1 VARCHAR(13) NULL,
+	passwd TEXT NOT NULL,
+
+	-- points
+	points NUMERIC(32,2) NOT NULL DEFAULT 0, 
+	-- others
+	-- merit NUMERIC(32,2) NOT NULL DEFAULT 0, 
+	-- coins NUMERIC(32,2) NOT NULL DEFAULT 0, 
+	-- timestaps
+	crt_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	up_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- +goose Down
+DROP TABLE accounts;

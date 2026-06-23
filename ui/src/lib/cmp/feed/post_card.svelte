@@ -47,13 +47,10 @@
 </script>
 
 <article
-	class="flex gap-3 py-5 px-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors cursor-pointer"
-	onclick={() => postQuery.set(String(post.id))}
-	role="button"
-	tabindex={0}
+	class="flex gap-3 py-5 px-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
 >
 	<!-- avatar -->
-	<div class="shrink-0">
+	<div class="shrink-0 cursor-pointer" onclick={() => postQuery.set(String(post.id))}>
 		<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-300 dark:bg-gray-700 text-sm font-bold text-white">
 			{post.username[0]}
 		</div>
@@ -61,6 +58,7 @@
 
 	<!-- body -->
 	<div class="flex-1 min-w-0">
+	<div class="cursor-pointer" onclick={() => postQuery.set(String(post.id))}>
 		<!-- user row: name [+ verified] + badges + sponsored -->
 		<div class="flex items-center gap-1.5 flex-wrap">
 			<!-- name with profile popover -->
@@ -101,7 +99,7 @@
 
 			<!-- badges stack -->
 			{#if post.badges.length > 0}
-				<button onclick={() => showBadges = !showBadges} class="relative flex items-center gap-0 cursor-pointer">
+				<button onclick={(e) => { e.stopPropagation(); showBadges = !showBadges; }} class="relative flex items-center gap-0 cursor-pointer">
 					{#each post.badges.slice(0, 3) as badge, j}
 						<span
 							class="flex h-4 w-4 items-center justify-center rounded-full text-[10px] leading-none ring-1 ring-white dark:ring-black {badge.color}"
@@ -135,7 +133,7 @@
 
 			<!-- popover backdrop -->
 			{#if showBadges}
-				<button class="fixed inset-0 z-30 cursor-default" onclick={() => showBadges = false}></button>
+				<button class="fixed inset-0 z-30 cursor-default" onclick={(e) => { e.stopPropagation(); showBadges = false; }}></button>
 			{/if}
 
 			{#if post.sponsored}
@@ -155,7 +153,7 @@
 			{expanded ? post.content : truncated + (showMoreBtn ? "..." : "")}
 		</div>
 		{#if showMoreBtn}
-			<button onclick={() => expanded = !expanded} class="mt-0.5 text-xs text-blue-600 dark:text-blue-400 hover:underline">
+			<button onclick={(e) => { e.stopPropagation(); expanded = !expanded; }} class="mt-0.5 text-xs text-blue-600 dark:text-blue-400 hover:underline">
 				{expanded ? 'Show less' : 'Show more'}
 			</button>
 		{/if}
@@ -186,6 +184,8 @@
 				</div>
 			</div>
 		{/if}
+
+		</div>
 
 		<PostActions post={post} votes={item.votes} commentCount={342} mostRelevant={item.most_relevant} />
 	</div>
